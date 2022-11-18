@@ -1,0 +1,19 @@
+array of currently active lines
+ - initialized array to make looping easier?
+
+steps
+ - gen coordinates & length from random free cell in occMap (2D Array random?)
+ - block Occupation map
+ - get start & end colors from points? if yes array of colors necessary, else fade in
+ - start line with single color
+ - scale up line / scale gradient to match
+ - scale down line / scale gradient to match
+ - (fade out)
+ - free Occupation map
+ - clear self
+
+animationframe -> divide speed by framerate
+random speed?
+
+loopable?
+export as animatable?

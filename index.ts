@@ -21,6 +21,7 @@ interface Config {
   whiteBackground?: boolean;
   overrideXCount?: number;
   overrideYCount?: number;
+  animate?: boolean;
 }
 
 let config: Config = {
@@ -38,20 +39,20 @@ let config: Config = {
   coloredDots: true,
   overrideXCount: 0,
   overrideYCount: 0,
-  // animate: false
+  animate: true
 }
 
 const configLimits = {
-  width: {min: 500, max: 5000, step: 50},
-  height: {min: 500, max: 5000, step: 50},
-  circleSize: {min: 1, max: 40, step: 1},
-  padding: {min: 0, max: 500, step: 10},
-  stepSize: {min: 5, max: 500, step: 5},
-  lineChance: {min: 0, max: 1, step: 0.05},
-  colorsPerLine: {min: 1, max: 25, step: 1},
-  maxLineLength: {min: 2, max: 20, step: 1},
-  overrideXCount: {max: 100, step: 1},
-  overrideYCount: {max: 100, step: 1},
+  width: { min: 500, max: 5000, step: 50 },
+  height: { min: 500, max: 5000, step: 50 },
+  circleSize: { min: 1, max: 40, step: 1 },
+  padding: { min: 0, max: 500, step: 10 },
+  stepSize: { min: 5, max: 500, step: 5 },
+  lineChance: { min: 0, max: 1, step: 0.05 },
+  colorsPerLine: { min: 1, max: 25, step: 1 },
+  maxLineLength: { min: 2, max: 20, step: 1 },
+  overrideXCount: { max: 100, step: 1 },
+  overrideYCount: { max: 100, step: 1 },
 }
 
 const colors = [
@@ -63,16 +64,6 @@ const colors = [
   "#6C2400",
   "#FF9900",
 ]
-
-// const gradient = [
-//   ["#44B4E9", 5],
-//   ["#002E5C", 22],
-//   ["#003A3E", 25],
-//   ["#008317", 45],
-//   ["#FED61E", 66],
-//   ["#FF9900", 77],
-//   ["#6C2400", 95]
-// ]
 
 // calculate absolute pposition with padding
 function calcPosition({ x, y, padding, numElements, reducedDims, subtractHalfCircle = true }) {
@@ -88,13 +79,13 @@ function calcPosition({ x, y, padding, numElements, reducedDims, subtractHalfCir
   return pos
 }
 
-function drawElement({ x, y, canvas, occupationMap, random, lineChance, lineLengthLimit, numElements, padding, circleSize, limitLinesToGrid, lineOverlap, colorsPerLine, coloredDots, reducedDims }: Config &{ x: number, y: number, occupationMap: number[][], random: RandomGen, lineLengthLimit: number, numElements: {x: number, y: number}, reducedDims: {width:number, height: number, halfCircle: number} }) {
+function drawElement({ x, y, canvas, occupationMap, random, lineChance, lineLengthLimit, numElements, padding, circleSize, limitLinesToGrid, lineOverlap, colorsPerLine, coloredDots, reducedDims }: Config & { x: number, y: number, occupationMap: number[][], random: RandomGen, lineLengthLimit: number, numElements: { x: number, y: number }, reducedDims: { width: number, height: number, halfCircle: number } }) {
 
   if (occupationMap[x].includes(y) || !canvas) return
   if (random.random() < lineChance! && x != numElements.x && y != 0) {
     // Line
     let length = random.intBetween(2, lineLengthLimit);
-    const { posX, posY } = calcPosition({ x, y, subtractHalfCircle: false, padding, numElements, reducedDims})
+    const { posX, posY } = calcPosition({ x, y, subtractHalfCircle: false, padding, numElements, reducedDims })
 
     if (limitLinesToGrid) {
       const overshootX = x + length - numElements.x;
@@ -118,7 +109,7 @@ function drawElement({ x, y, canvas, occupationMap, random, lineChance, lineLeng
       }
     }).transform({
       rotate: -45,
-      origin: {x: .5, y: .5}
+      origin: { x: .5, y: .5 }
     })
     canvas.line(posX, posY, endX, endY).stroke({
       width: circleSize,
@@ -182,7 +173,7 @@ for (const key in config) {
   pane.addInput(config, key as keyof Config, configLimits[key] ?? {})
 }
 
-pane.on('change', (e) => {
+pane.on('change', () => {
   pane.refresh()
   render(config)
 })
@@ -214,7 +205,7 @@ exportButton.on('click', () => {
 
 const saveButton = pane.addButton({ title: "Save SVG" })
 saveButton.on('click', () => {
-  var url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(config.canvas?.svg()!);
+  var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(config.canvas?.svg()!);
   const link = document.createElement("a")
   link.href = url
   link.download = `HiP-Visual-${config.seed}.svg`
@@ -230,3 +221,6 @@ SVGOn(document, "DOMContentLoaded", function () {
   render(config)
   pane.refresh()
 })
+
+if (config.animate) {
+}
